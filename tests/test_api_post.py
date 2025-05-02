@@ -15,6 +15,7 @@ import requests
 import pytest
 import allure
 from data.config import BASE_URL
+from data.test_data import new_post_data  # <-- Import the test data
 from utils.logger import logger
 
 
@@ -26,18 +27,12 @@ from utils.logger import logger
 def test_create_post():
     """Test to verify a POST request creates a new post with correct data."""
 
-    new_post = {
-        "title": "foo",
-        "body": "bar",
-        "userId": 1
-    }
-
     logger.info("Starting test_create_post")
-    logger.debug(f"Payload to be sent: {new_post}")
+    logger.debug(f"Payload to be sent: {new_post_data}")
 
     try:
         with allure.step("Send POST request to /posts endpoint"):
-            response = requests.post(BASE_URL, json=new_post)
+            response = requests.post(BASE_URL, json=new_post_data)
             logger.info(f"POST status code: {response.status_code}")
             logger.debug(f"POST response body: {response.text}")
 
@@ -48,9 +43,9 @@ def test_create_post():
             data = response.json()
             allure.attach(str(data), name="Response JSON", attachment_type=allure.attachment_type.JSON)
 
-            assert data["title"] == "foo", "Title mismatch"
-            assert data["body"] == "bar", "Body mismatch"
-            assert data["userId"] == 1, "User ID mismatch"
+            assert data["title"] == new_post_data["title"], "Title mismatch"
+            assert data["body"] == new_post_data["body"], "Body mismatch"
+            assert data["userId"] == new_post_data["userId"], "User ID mismatch"
 
         logger.info("test_create_post PASSED")
 

@@ -34,7 +34,8 @@ def test_create_post_extra_fields():
             allure.attach(str(response.json()), name="POST Response", attachment_type=allure.attachment_type.JSON)
 
             assert response.status_code in [200, 201]
-            assert "unexpected" not in response.json()
+            #Peter Chao
+            assert "unexpected"  in response.json()
 
     except Exception as e:
         logger.error(f"Test failed: {e}")

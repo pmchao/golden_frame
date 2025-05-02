@@ -1,6 +1,7 @@
 # test_api_posts.py
 import requests
 import pytest
+from data.config import BASE_URL
 
 
 
