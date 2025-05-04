@@ -20,7 +20,10 @@ def run_all_tests():
         print("Launching Allure report (will auto-close in 10 seconds)...")
         proc = subprocess.Popen(["allure", "serve", "allure-results"])
 
-        time.sleep(10)
+        print("Launching Allure report (will auto-close in 10 seconds)...")
+        for i in range(10, 0, -1):
+            print(f"Closing in {i} seconds...", end='\r')
+            time.sleep(1)
 
         print("Stopping Allure server gracefully...")
         proc.terminate()  # Just stop the allure server, not the whole terminal
