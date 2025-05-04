@@ -2,38 +2,38 @@
 run_tests.py
 
 Purpose:
-    Acts as a driver script to automate running all pytest-based API tests
-    and generating an Allure report.
-
-Features:
-    - Executes all tests using pytest
-    - Stores test results in the 'allure-results' folder
-    - Serves the Allure report in the browser automatically
-
-Requirements:
-    - pytest
-    - allure-pytest
-    - Allure command-line tool installed and in PATH
+    Runs pytest-based API tests and shows the Allure report for 10 seconds,
+    then gracefully stops the Allure server without closing PyCharm or terminal.
 
 Usage:
     python run_tests.py
 """
 
 import subprocess
+import time
 
 def run_all_tests():
     try:
         print("Running tests...")
         subprocess.run(["pytest", "--alluredir=allure-results"], check=True)
 
-        print("Launching Allure report...")
-        subprocess.run(["allure", "serve", "allure-results"], check=True)
+        print("Launching Allure report (will auto-close in 10 seconds)...")
+        proc = subprocess.Popen(["allure", "serve", "allure-results"])
+
+        time.sleep(10)
+
+        print("Stopping Allure server gracefully...")
+        proc.terminate()  # Just stop the allure server, not the whole terminal
+        proc.wait(timeout=5)
 
     except subprocess.CalledProcessError as e:
-        print(f"Error occurred during test execution: {e}")
+        print(f"Test execution failed: {e}")
     except FileNotFoundError as e:
-        print("Make sure Allure is installed and in your system PATH.")
+        print("Allure CLI not found. Make sure it’s installed and in PATH.")
         print(f"System error: {e}")
+    except subprocess.TimeoutExpired:
+        print("Allure server did not shut down in time, forcing close.")
+        proc.kill()
 
 if __name__ == "__main__":
     run_all_tests()
